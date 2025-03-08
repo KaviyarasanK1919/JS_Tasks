@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Expense Tracker</title>
+        <style>
+            body
+            {
+                background-color: aliceblue;
+                font-family: 'Times New Roman', Times, serif;
+                text-align: center;
+                align-items: center;
+                justify-content: center ;
+            }
+            h2,h3{
+                color: black;
+            }
+            .container
+            {
+                width: 500px;
+                height: 800px;
+                padding: 20px;
+                margin-top: 50px;
+                margin-left: 30%;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+                background: #fff;
+                justify-content: center;
+            }
+            input
+            {
+                padding: 10px;
+                height: 20px;
+                border: 2px solid black;
+                margin-bottom: 10px;
+                border-radius: 10px;
+                width: 90%;
+            }
+            button
+            {
+                padding: 10px;
+                background-color: blue;
+                border: none;
+                border-radius: 5px;
+                color: whitesmoke;
+                font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+                font-size: 15px;
+            }
+            l {
+                list-style: none;
+                padding: 0;
+            }
+            li {
+                display: flex;
+                justify-content: space-between;
+                border-bottom: 1px solid #ddd;
+                padding: 8px;
+                font-size: 23px;
+            }
+            li button {
+                background-color: red;
+                color: white;
+                border: none;
+                border-radius: 5px;
+                padding: 5px 10px;
+                cursor: pointer;
+            }
+            li button:hover {
+                background-color: darkred;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div>
+                <h2>
+                    Expense Tracker
+                </h2>
+                <form id="income-form">
+                    <input type = "number" placeholder="Enter Initial Amount : " id = "income">
+                    <button type="submit">Set Income</button>
+                </form>
+            </div>
+            <div>
+                <h2>Income : ₹<span id = "income-amount">0</span></h2>
+                <form id="expense-form">
+                    <input type="text" id="expense-name" placeholder="Expense Name" required>
+                    <input type="number" id="expense-amount" placeholder="Amount" required>
+                    <button type="submit">Add Expense</button>
+                  </form>
+            </div>
+            <div>
+                <ul id="expense-list"></ul>
+                    <h2>Total Expenses: ₹<span id="total-expense">0</span></h2>
+                    <h2>Remaining Balance: ₹<span id="remaining-balance">0</span></h2>
+            </div>
+        </div>
+        <script>
+
+        let totalIncome = 0;
+        let totalExpenses = 0;
+        const incomeForm = document.getElementById("income-form");
+        const expenseForm = document.getElementById("expense-form");
+        const expenseList = document.getElementById("expense-list");
+        const totalExpense = document.getElementById("total-expense");
+        const incomeAmount = document.getElementById("income-amount");
+        const remainingBalance = document.getElementById("remaining-balance");
+
+        incomeForm.addEventListener("submit", (event) =>
+        {
+            event.preventDefault();
+            totalIncome = parseFloat(document.getElementById("income").value);
+            incomeAmount.textContent = totalIncome.toFixed(2);
+            updateBalance();
+        });
+        expenseForm.addEventListener("submit", (event) =>
+        {
+            event.preventDefault();
+            const name = document.getElementById("expense-name").value;
+            const amount = parseFloat(document.getElementById("expense-amount").value);
+            totalExpenses += amount;
+            updateTotalExpenses();
+            addExpenseToList(name, amount);
+            expenseForm.reset();
+        });
+
+        function updateTotalExpenses() 
+        {
+            totalExpense.textContent = totalExpenses;
+            updateBalance();
+        }
+
+        function updateBalance() 
+        {
+            const balance = totalIncome - totalExpenses;
+            remainingBalance.textContent = balance.toFixed(2);
+        }    
+        function addExpenseToList(name, amount) 
+        {
+            const li = document.createElement("li");
+            li.textContent = `${name}: ₹${amount.toFixed(2)}`;
+
+            const deleteBtn = document.createElement("button");
+            deleteBtn.textContent = "Remove";
+            deleteBtn.addEventListener("click", () => {
+            totalExpenses -= amount;
+            updateTotalExpenses();
+            expenseList.removeChild(li);
+        });
+
+        li.appendChild(deleteBtn);
+        expenseList.appendChild(li);
+        }
+        </script>
+    </body>
+</html>
