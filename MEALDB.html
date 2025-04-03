@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meal Categories</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: black;
+            color: white;
+        }
+
+        #categories, #searchResults {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .category, .meal {
+            border: 1px solid #2b2121;
+            border-radius: 8px;
+            width: 300px;
+            margin: 10px;
+            padding: 10px;
+            background: rgb(70, 68, 68);
+            
+        }
+
+        .category:hover, .meal:hover {
+            transform: scale(0.8);
+        }
+
+        .category img, .meal img {
+            width: 100%;
+            border-radius: 8px;
+        }
+
+        .category h2, .meal h2 {
+            font-size: 18px;
+            margin: 10px 0;
+        }
+
+        .search-container {
+            margin-top: 20px;
+        }
+
+        .search-container input {
+            padding: 8px;
+            width: 400px;
+            height: 30px;
+            border-radius: 5px;
+            border: none;
+        }
+
+        .search-container button {
+            padding: 8px 12px;
+            margin-left: 20px;
+            border: none;
+            width: 100px;
+            height : 45px;
+            font-size: 20px;
+            border-radius: 5px;
+            background-color: #ff9800;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Welcome to TheMealDB</h1>
+    
+    <div class="search-container">
+        <input type="text" id="searchInput" placeholder="Search meal by name...">
+        <button onclick="searchMeal()">Search</button>
+    </div>
+
+    <div id="searchResults"></div>
+    <div id="categories"></div>
+
+    <script>
+        const API_CATEGORIES = "https://www.themealdb.com/api/json/v1/1/categories.php";
+       
+        fetch(API_CATEGORIES)
+            .then(response => response.json())
+            .then(data => {
+                let categoriesContainer = document.getElementById("categories");
+                data.categories.forEach(category => {
+                    let categoryHTML = `
+                        <div class="category">
+                            <img src="${category.strCategoryThumb}" alt="${category.strCategory}">
+                            <h2>${category.strCategory}</h2>
+                        </div>
+                    `;
+                    categoriesContainer.innerHTML += categoryHTML;
+                });
+            })
+            .catch(error => console.error("Error fetching categories:", error));
+
+        function searchMeal() {
+            const API_SEARCH = "https://www.themealdb.com/api/json/v1/1/search.php?s=";
+
+            let searchQuery = document.getElementById("searchInput").value;
+            if (!searchQuery) return;
+            
+            fetch(API_SEARCH + searchQuery)
+                .then(response => response.json())
+                .then(data => {
+                    let searchResultsContainer = document.getElementById("searchResults");
+                    searchResultsContainer.innerHTML = "";
+                    
+                    if (data.meals) {
+                        data.meals.forEach(meal => {
+                            let mealHTML = `
+                                <div class="meal">
+                                    <img src="${meal.strMealThumb}" alt="${meal.strMeal}">
+                                    <h2>${meal.strMeal}</h2>
+                                </div>
+                            `;
+                            searchResultsContainer.innerHTML += mealHTML;
+                        });
+                    } else {
+                        searchResultsContainer.innerHTML = "<p>No meals found.</p>";
+                    }
+                })
+                .catch(error => console.error("Error fetching meal:", error));
+        }
+    </script>
+</body>
+
+</html>
